@@ -56,7 +56,7 @@ export async function zohoApiRequest(
 
 		console.log(responseData)
 
-		return responseData.response.result;
+		return responseData;
 	} catch (error) {
 		console.log(error)
 		throw new NodeApiError(this.getNode(), error as any);

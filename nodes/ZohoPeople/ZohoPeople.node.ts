@@ -20,7 +20,8 @@ import {
 } from 'request';
 
 import { formFields, formOperations } from './descriptions/FormDescription';
-import { GetAllFilterOptions } from './types';
+import { attendanceFields, attendanceOperations } from './descriptions/AttendanceDescription';
+import { casesFields, casesOperations } from './descriptions/CasesDescription';
 
 export class ZohoPeople implements INodeType {
 	description: INodeTypeDescription = {
@@ -50,17 +51,29 @@ export class ZohoPeople implements INodeType {
 					noDataExpression: true,
 					type: 'options',
 					options: [
-							{
-									name: 'Forms',
-									value: 'forms',
-							},
+						{
+								name: 'Forms',
+								value: 'forms',
+						},
+						{
+							name: 'Attendance',
+							value: 'attendance',
+						},
+						{
+							name: 'Cases',
+							value: 'cases',
+						},
 					],
 					default: 'forms',
 					required: true,
 					description: 'Resource to consume',
 			},
 			...formOperations,
-			...formFields
+			...formFields,
+			...attendanceOperations,
+			...attendanceFields,
+			...casesOperations,
+			...casesFields
 		],
 	};
 
@@ -94,6 +107,44 @@ export class ZohoPeople implements INodeType {
 						const sIndex = this.getNodeParameter('sIndex', 0) as number;
 						const limit = this.getNodeParameter('limit', 0) as number;
 						const endpoint = `/forms/${formLinkName}/getRecords?sIndex=${sIndex}&limit=${limit}`
+						responseData = await zohoApiRequest.call(this, 'GET', endpoint, {}, {});
+					}
+					if (operation === 'getRecordCount') {
+						const formLinkName = this.getNodeParameter('formLinkName', 0) as string;
+						const endpoint = `/forms/${formLinkName}/getRecordCount`
+						responseData = await zohoApiRequest.call(this, 'GET', endpoint, {}, {});
+					}
+
+				}
+				else if (resource === 'attendance') {
+
+					if (operation === 'fetchLastAttendanceEntries') {
+						const duration = this.getNodeParameter('duration', 0) as number;
+						const dateTimeFormat = this.getNodeParameter('dateTimeFormat', 0) as string;
+						const endpoint = `/attendance/fetchLatestAttEntries?duration=${duration}&dateTimeFormat=${dateTimeFormat}`
+						responseData = await zohoApiRequest.call(this, 'GET', endpoint, {}, {});
+					}
+					if (operation === 'shiftDetailsOfEmployee') {
+						const mapId = this.getNodeParameter('mapId', 0) as string;
+						const emailId = this.getNodeParameter('emailId', 0) as string;
+						const empId = this.getNodeParameter('empId', 0) as string;
+						const sdate = this.getNodeParameter('sdate', 0) as string;
+						const edate = this.getNodeParameter('edate', 0) as string;
+
+						const endpoint = `/attendance/getShiftConfiguration?empId=${empId}&sdate=${sdate}&edate=${edate}`
+						responseData = await zohoApiRequest.call(this, 'GET', endpoint, {}, {});
+					}
+				}
+				else if (resource === 'cases') {
+
+					if (operation === 'listCategory') {
+						const endpoint = '/hrcases/listCategory'
+						responseData = await zohoApiRequest.call(this, 'GET', endpoint, {}, {});
+					}
+					if (operation === 'viewcase') {
+						const recordId = this.getNodeParameter('recordId', 0) as string;
+
+						const endpoint = `/hrcases/viewcase?recordId=${recordId}`
 						responseData = await zohoApiRequest.call(this, 'GET', endpoint, {}, {});
 					}
 				}

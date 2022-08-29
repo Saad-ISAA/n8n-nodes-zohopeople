@@ -26,6 +26,11 @@ export const formOperations: INodeProperties[] = [
 				value: 'getBulkRecords',
 				description: 'used to fetch bulk records along with its tabular section details from particular forms',
 			},
+			{
+				name: 'Get Record Count',
+				value: 'getRecordCount',
+				description: 'used to know the total records count of any form.',
+			},
 		],
 		default: 'fetchForms',
 	},
@@ -45,7 +50,7 @@ export const formFields: INodeProperties[] = [
 		displayOptions: {
 			show: {
 				resource: ['forms'],
-				operation: ['getBulkRecords'],
+				operation: ['getBulkRecords','getRecordCount'],
 			},
 		},
 	},
