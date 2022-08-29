@@ -49,8 +49,8 @@ export const formFields: INodeProperties[] = [
 		default: '',
 		displayOptions: {
 			show: {
-				resource: ['forms'],
-				operation: ['getBulkRecords','getRecordCount'],
+				resource: ['forms', 'view'],
+				operation: ['getBulkRecords','getRecordCount', 'fetchViewOfSpecificForm'],
 			},
 		},
 	},

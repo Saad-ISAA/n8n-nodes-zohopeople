@@ -22,6 +22,8 @@ import {
 import { formFields, formOperations } from './descriptions/FormDescription';
 import { attendanceFields, attendanceOperations } from './descriptions/AttendanceDescription';
 import { casesFields, casesOperations } from './descriptions/CasesDescription';
+import { viewFields, viewOperations } from './descriptions/ViewDescription';
+import { leaveFields, leaveOperations } from './descriptions/LeaveDescription';
 
 export class ZohoPeople implements INodeType {
 	description: INodeTypeDescription = {
@@ -63,6 +65,14 @@ export class ZohoPeople implements INodeType {
 							name: 'Cases',
 							value: 'cases',
 						},
+						{
+							name: 'Leave',
+							value: 'leave',
+						},
+						{
+							name: 'View',
+							value: 'view',
+						},
 					],
 					default: 'forms',
 					required: true,
@@ -73,7 +83,11 @@ export class ZohoPeople implements INodeType {
 			...attendanceOperations,
 			...attendanceFields,
 			...casesOperations,
-			...casesFields
+			...casesFields,
+			...viewOperations,
+			...viewFields,
+			...leaveOperations,
+			...leaveFields
 		],
 	};
 
@@ -145,6 +159,34 @@ export class ZohoPeople implements INodeType {
 						const recordId = this.getNodeParameter('recordId', 0) as string;
 
 						const endpoint = `/hrcases/viewcase?recordId=${recordId}`
+						responseData = await zohoApiRequest.call(this, 'GET', endpoint, {}, {});
+					}
+				}
+				else if (resource === 'view') {
+
+					if (operation === 'defaultAndCustomView') {
+						const endpoint = '/views'
+						responseData = await zohoApiRequest.call(this, 'GET', endpoint, {}, {});
+					}
+					if (operation === 'fetchViewOfSpecificForm') {
+						const formLinkName = this.getNodeParameter('formLinkName', 0) as string;
+
+						const endpoint = `/forms/${formLinkName}/views`
+						responseData = await zohoApiRequest.call(this, 'GET', endpoint, {}, {});
+					}
+				}
+				else if (resource === 'leave') {
+
+					if (operation === 'getLeaveTypes') {
+						const userId = this.getNodeParameter('userId', 0) as string;
+
+						const endpoint = `/leave/getLeaveTypeDetails?userId=${userId}`
+						responseData = await zohoApiRequest.call(this, 'GET', endpoint, {}, {});
+					}
+					if (operation === 'getHolidays') {
+						const userId = this.getNodeParameter('userId', 0) as string;
+
+						const endpoint = `/leave/getLeaveTypeDetails?userId=${userId}`
 						responseData = await zohoApiRequest.call(this, 'GET', endpoint, {}, {});
 					}
 				}
